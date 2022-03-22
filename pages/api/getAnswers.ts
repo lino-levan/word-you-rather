@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 
 export default async function handler(req, res) {
-  const daysSinceEpoch = Math.floor(((new Date()).getTime()/1000 + 25200)/86400)
+  const daysSinceEpoch = Math.floor((new Date()).getTime()/1000/86400)
   const { selected } = req.query
 
   const uri = process.env.MONGO_URI
