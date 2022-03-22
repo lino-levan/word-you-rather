@@ -14,7 +14,7 @@ const fetchAnswers = (callback: any, index?: number)=>{
     })
 }
 
-const daysSinceEpoch = Math.floor((new Date()).getTime()/1000/86400)
+const daysSinceEpoch = Math.floor(((new Date()).getTime()/1000 + 25200)/86400)
 
 export default function Home() {
   const { data: options, error: eOptions } = useSWR('/api/getToday', fetcher)

@@ -23,7 +23,7 @@ export default function handler(req, res) {
 
   let output: string[] = []
 
-  const daysSinceEpoch = Math.floor((new Date()).getTime()/1000/86400)
+  const daysSinceEpoch = Math.floor(((new Date()).getTime()/1000 + 86400)/86400)
 
   const random = seededRandom(daysSinceEpoch)
   const numOptions = Math.ceil(random() * 3) + 1
