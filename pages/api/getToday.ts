@@ -1,46 +1,66 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import moment from 'moment-timezone'
+import { generateClient } from './libs/client'
 
-const seededRandom = (s) => {
-  var mask = 0xffffffff;
-  var m_w  = (123456789 + s) & mask;
-  var m_z  = (987654321 - s) & mask;
-
-  return function() {
-    m_z = (36969 * (m_z & 65535) + (m_z >>> 16)) & mask;
-    m_w = (18000 * (m_w & 65535) + (m_w >>> 16)) & mask;
-
-    var result = ((m_z << 16) + (m_w & 65535)) >>> 0;
-    result /= 4294967296;
-    return result;
+const cleanData = (data: {answers: string[][], options: number[][], date: string}) => {
+  return {
+    date: data.date,
+    answers: data.answers,
+    options: data.options
   }
 }
 
-export const max = 1000
-
-export default function handler(req, res) {
+export default async function handler(req, res) {
   let postive: string[] = JSON.parse(process.env.POSITIVE)
   let negative: string[] = JSON.parse(process.env.NEGATIVE)
 
-  let output: string[] = []
+  let answers: string[][] = []
 
-  const daysSinceEpoch = Math.floor((new Date()).getTime()/1000/86400)
+  const client = generateClient()
 
-  const random = seededRandom(daysSinceEpoch)
-  const numOptions = Math.ceil(random() * 3) + 1
-  const postiveDay = random() < 0.5
+  const now = moment().utc().tz('America/Los_Angeles')
 
-  while(output.length < numOptions) {
-    let pos = Math.floor(random() * max)
-    if(postiveDay) {
-      if(pos < postive.length) {
-        output.push(postive[pos])
-      }
-    } else {
-      if(pos < negative.length) {
-        output.push(negative[pos])
+  for(let numQuestions = 0; numQuestions < 5; numQuestions++) {
+    const numOptions = Math.ceil(Math.random() * 3) + 1
+    const postiveDay = Math.random() < 0.5
+    
+    answers.push([])
+    while(answers[numQuestions].length < numOptions) {
+      if(postiveDay) {
+        let pos = Math.floor(Math.random() * postive.length)
+        if(pos < postive.length) {
+          answers[numQuestions].push(postive[pos])
+        }
+      } else {
+        let pos = Math.floor(Math.random() * negative.length)
+        if(pos < negative.length) {
+          answers[numQuestions].push(negative[pos])
+        }
       }
     }
   }
 
-  res.status(200).json(output)
+  await client.connect()
+
+  try {
+
+    const prompts = client.db("wordyourather").collection("prompts")
+    const prompt: {date: string, answers: string[][], options: number[][]} = await prompts.findOne({}, {sort:{$natural:-1}}) as any
+
+    if(prompt === null || !now.isSame(moment(prompt.date), 'date')) {
+      const generated = {
+        date: now.toISOString(),
+        answers: answers,
+        options: answers.map((answer)=>answer.map(()=>0))
+      }
+
+      res.status(200).json(cleanData(generated))
+
+      await prompts.insertOne(generated)
+    } else {
+      res.status(200).json(cleanData(prompt))
+    }
+  }
+  catch(err) {}
+
+  await client.close()
 }
