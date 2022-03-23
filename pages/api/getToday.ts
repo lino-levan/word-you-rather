@@ -53,10 +53,14 @@ export default async function handler(req, res) {
         options: answers.map((answer)=>answer.map(()=>0))
       }
 
+      console.log(generated)
+
       res.status(200).json(cleanData(generated))
 
       await prompts.insertOne(generated)
     } else {
+      console.log(prompt)
+
       res.status(200).json(cleanData(prompt))
     }
   }
