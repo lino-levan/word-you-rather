@@ -1,10 +1,15 @@
 import moment from 'moment'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 import Game from '../components/Game'
 import Popup from '../components/Popup'
 
+const fetcher = (url) => fetch(url).then((res) => res.json())
+
 export default function Home() {
+  const { data, error: eOptions } = useSWR('/api/getToday', fetcher)
+
   const [score, setScore] = useState(0)
   const [winScreen, setWinScreen] = useState(false)
 
@@ -37,7 +42,7 @@ export default function Home() {
           winScreen?
           <Popup score={score}/>
           :
-          <Game score={score} setScore={setScore} setWinScreen={setWinScreen}/>
+          <Game score={score} setScore={setScore} setWinScreen={setWinScreen} data={data}/>
         }
       </main>
     </div>

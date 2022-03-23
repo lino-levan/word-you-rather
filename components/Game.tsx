@@ -1,12 +1,7 @@
 import moment from 'moment-timezone'
-import useSWR from 'swr'
 import { useState } from 'react'
 
-const fetcher = (url) => fetch(url).then((res) => res.json())
-
-function Game({score, setScore, setWinScreen}) {
-  const { data, error: eOptions } = useSWR('/api/getToday', fetcher)
-
+function Game({score, setScore, setWinScreen, data}) {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [percentages, setPercentages] = useState<number[]>([])
   const [selected, setSelected] = useState(-1)
@@ -45,7 +40,7 @@ function Game({score, setScore, setWinScreen}) {
                   if(selected === -1) {
                     setSelected(i)
 
-                    fetcher(`/api/setAnswer?selected=${i}&question=${currentQuestion}`)
+                    fetch(`/api/setAnswer?selected=${i}&question=${currentQuestion}`)
 
                     let calculatedPercentages = options.map((op, index)=>Math.round(((index===i?op+1:op)/(options.reduce((partialSum, a) => partialSum + a, 0) + 1))*100))
 
