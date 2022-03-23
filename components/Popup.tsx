@@ -14,7 +14,7 @@ import {
 } from "react-share";
 
 function Popup({score}) {
-  const now = moment().utc().tz('America/Los_Angeles')
+  const now = moment().utc().tz('America/Los_Angeles').subtract(1, 'day')
 
   return (
     <div className="shadow p-10 rounded-xl max-w-xl w-full flex flex-col items-center">

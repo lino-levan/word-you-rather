@@ -58,7 +58,6 @@ function Game({score, setScore, setWinScreen}) {
                     if(currentQuestion === 4) {
                       localStorage.setItem("score", score.toString())
                       localStorage.setItem("date", moment().utc().tz('America/Los_Angeles').toISOString())
-                      setWinScreen(true)
                     }
                   }
                 }} className={`border rounded-2xl px-20 py-5 w-full relative z-10 percent-filled ${selected===i?"border-blue-400":""}`}>
@@ -71,13 +70,17 @@ function Game({score, setScore, setWinScreen}) {
           <h1 className="text-center">Loading...</h1>
         }
         {
-          selected !== -1 && currentQuestion < 4?
+          selected !== -1?
           <div onClick={()=>{
             setSelected(-1)
             setCurrentQuestion(currentQuestion+1)
             setPercentages([])
+
+            if(currentQuestion === 4) {
+              setWinScreen(true)
+            }
           }} className="border rounded-2xl px-20 py-5 w-full relative z-10 percent-filled bg-blue-300 border-blue-400">
-            <h2 className="text-2xl text-center">Next Question ({currentQuestion+1}/5)</h2>
+            <h2 className="text-2xl text-center">{currentQuestion < 4?`Next Question (${currentQuestion+1}/5)`: "Finish"}</h2>
           </div>
           :null
         }
