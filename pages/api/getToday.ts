@@ -27,12 +27,12 @@ export default async function handler(req, res) {
     while(answers[numQuestions].length < numOptions) {
       if(postiveDay) {
         let pos = Math.floor(Math.random() * postive.length)
-        if(pos < postive.length) {
+        if(pos < postive.length && answers[numQuestions].includes(postive[pos])) {
           answers[numQuestions].push(postive[pos])
         }
       } else {
         let pos = Math.floor(Math.random() * negative.length)
-        if(pos < negative.length) {
+        if(pos < negative.length && answers[numQuestions].includes(negative[pos])) {
           answers[numQuestions].push(negative[pos])
         }
       }
