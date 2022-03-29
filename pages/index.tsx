@@ -1,6 +1,5 @@
-import moment from 'moment'
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import useSWR from 'swr'
 import Game from '../components/Game'
 import Popup from '../components/Popup'
@@ -12,19 +11,6 @@ export default function Home() {
 
   const [score, setScore] = useState(0)
   const [winScreen, setWinScreen] = useState(false)
-
-  useEffect(()=>{
-    const now = moment().utc().tz('America/Los_Angeles')
-
-    if(localStorage.getItem("date") && now.isSame(moment(localStorage.getItem("date")))) {
-      localStorage.removeItem("score")
-    }
-
-    if(localStorage.getItem("score") !== null) {
-      setScore(parseInt(localStorage.getItem("score")))
-      setWinScreen(true)
-    }
-  }, [])
 
   return (
     <div>
