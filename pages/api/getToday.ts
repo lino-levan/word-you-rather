@@ -10,8 +10,8 @@ const cleanData = (data: {answers: string[][], options: number[][], date: string
 }
 
 export default async function handler(req, res) {
-  let postive: string[] = JSON.parse(process.env.POSITIVE)
-  let negative: string[] = JSON.parse(process.env.NEGATIVE)
+  let postive: string[] = process.env.POSITIVE.split(",")
+  let negative: string[] = process.env.NEGATIVE.split(",")
 
   let answers: string[][] = []
 
