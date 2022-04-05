@@ -4,10 +4,12 @@ import useSWR from 'swr'
 import Game from '../components/Game'
 import Popup from '../components/Popup'
 
+export const functionsDir = '/.netlify/functions'
+
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
 export default function Home() {
-  const { data, error: eOptions } = useSWR('/api/getToday', fetcher)
+  const { data, error: eOptions } = useSWR(`${functionsDir}/getToday`, fetcher)
 
   const [score, setScore] = useState(0)
   const [winScreen, setWinScreen] = useState(false)

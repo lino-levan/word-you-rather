@@ -1,8 +1,8 @@
+import { Handler } from "@netlify/functions"
 import { generateClient } from "./libs/client"
 
-export default async function handler(req, res) {
-  const daysSinceEpoch = Math.floor((new Date()).getTime()/1000/86400)
-  const { selected, question } = req.query
+export const handler: Handler = async (event, context) => {
+  const { selected, question } = event.queryStringParameters
   
   const client = generateClient()
 
@@ -21,12 +21,19 @@ export default async function handler(req, res) {
 
     await prompts.updateOne({date: prompt.date} , settings)
 
-    res.status(200).json({res:"Worked"})
+    await client.close()
+    return {
+      statusCode: 200,
+      body: JSON.stringify({res:"Worked"}),
+    }
   }
   catch(err) {
     console.log(err)
-    res.status(404).json({res:"Unknown Error"})
-  }
 
-  await client.close()
+    await client.close()
+    return {
+      statusCode: 404,
+      body: JSON.stringify({res:"Unknown Error"}),
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import { Handler } from '@netlify/functions'
 import moment from 'moment-timezone'
 import { generateClient } from './libs/client'
 
@@ -9,7 +10,7 @@ const cleanData = (data: {answers: string[][], options: number[][], date: string
   }
 }
 
-export default async function handler(req, res) {
+export const handler: Handler = async () => {
   let postive: string[] = process.env.POSITIVE.split(",")
   let negative: string[] = process.env.NEGATIVE.split(",")
 
@@ -54,17 +55,28 @@ export default async function handler(req, res) {
       }
 
       console.log(generated)
-
-      res.status(200).json(cleanData(generated))
-
       await prompts.insertOne(generated)
+      await client.close()
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(cleanData(generated)),
+      }
     } else {
       console.log(prompt)
 
-      res.status(200).json(cleanData(prompt))
+      return {
+        statusCode: 200,
+        body: JSON.stringify(cleanData(prompt)),
+      }
     }
   }
   catch(err) {}
 
   await client.close()
+
+  return {
+    statusCode: 404,
+    body: JSON.stringify({msg:"Unknown Error"}),
+  }
 }

@@ -1,5 +1,6 @@
 import moment from 'moment-timezone'
 import { useState } from 'react'
+import { functionsDir } from '../pages'
 
 function Game({score, setScore, setWinScreen, data}) {
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -40,7 +41,7 @@ function Game({score, setScore, setWinScreen, data}) {
                   if(selected === -1) {
                     setSelected(i)
 
-                    fetch(`/api/setAnswer?selected=${i}&question=${currentQuestion}`)
+                    fetch(`${functionsDir}/setAnswer?selected=${i}&question=${currentQuestion}`)
 
                     let calculatedPercentages = options.map((op, index)=>Math.round(((index===i?op+1:op)/(options.reduce((partialSum, a) => partialSum + a, 0) + 1))*100))
 
