@@ -7,10 +7,10 @@ A simple would you rather game that posts a unique prompt every day!
 First, run the development server:
 
 ```bash
-npm run dev
+netlify dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:8888> with your browser to see the result.
 
 ## Netlify Deploy
 
